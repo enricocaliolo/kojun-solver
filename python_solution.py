@@ -49,15 +49,14 @@ def is_valid(board, regions, empty_cell, num):
     # checar ortogonalmente as adjacências
     # checar se há alguma célula acima ou abaixo
 
-    if num == 3 and board[8][6] == 1:
-        pass
-
     region, region_cells = find_region(empty_cell, regions)
 
+    # checa se número já existe na região
     for cell in regions[region]:
         if board[cell[0]][cell[1]] == num:
             return False
 
+    # checa se número é válido
     if num > len(region_cells):
         return False
 
@@ -66,7 +65,7 @@ def is_valid(board, regions, empty_cell, num):
 
     # número em cima maior
     for row in range(x):
-        region_cell, region_cells = find_region((row, y), regions)
+        region_cell, _ = find_region((row, y), regions)
         if region_cell == region and board[row][y] != 0 and board[row][y] < num:
             return False
 
@@ -96,8 +95,6 @@ def solve(board, regions):
         return True
 
     for num in range(1, len(board) + 1):
-        if empty_cell == (8, 6) and num == 1:
-            pass
         if is_valid(board, regions, empty_cell, num):
             board[empty_cell[0]][empty_cell[1]] = num
 
@@ -105,6 +102,7 @@ def solve(board, regions):
                 return True
 
             board[empty_cell[0]][empty_cell[1]] = 0
+
     return False
 
 
