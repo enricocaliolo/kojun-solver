@@ -28,12 +28,143 @@
       (format t "~2d " cell))
     (format t "~%")))
 
-(defun print-kojun-regions (regions)
-  (dolist (row regions)
-    (dolist (cell row)
-      (format t "~2d " cell))
-    (format t "~%")))
+(defun print-region-dict (region-dict)
+  (maphash (lambda (key value)
+             (format t "Region ~a: ~a~%" key value))
+           region-dict))
 
-;; Usage
-(print-kojun-board (kojun-board))
-; (print-kojun-regions (kojun-regions))
+(defun create-region-dict (regions)
+  (let ((region-dict (make-hash-table)))
+    (loop for i from 0 to (1- (length regions)) do
+          (loop for j from 0 to (1- (length (nth i regions))) do
+                (let ((region (nth j (nth i regions))))
+                  (push (list i j) (gethash region region-dict)))))
+    region-dict))
+
+(defun change-board-value (board row col value)
+  (setf (nth col (nth row board)) value))
+
+(defun find-empty-cell (board)
+    (loop for i from 0 to (1- (length board)) do
+        (loop for j from 0 to (1- (length board)) do
+         (if (= (nth j (nth i board)) 0)
+            (return-from find-empty-cell (list i j)))))
+    nil)
+
+(defun find-region (i j region-dict)
+  (loop named outer for k being the hash-keys in region-dict using (hash-value v) do
+        (loop for item in v do
+              (destructuring-bind (row col) item
+                (when (and (= i row) (= j col))
+                    (return-from find-region k)))))
+  nil) ; Return nil if no region is found
+
+(defun get-region-cells (region regions-dict)
+    (gethash region regions-dict)
+)
+
+(defun get-cell-value (board row col)
+    (nth col (nth row board))
+)
+
+(defun check-if-number-exist-in-region (board region-cells empty-cell-row empty-cell-col num)
+  (loop for cell in region-cells do
+        (destructuring-bind (row col) cell
+          (let ((cell-value (get-cell-value board row col)))
+            (if (= cell-value num)
+                (return-from check-if-number-exist-in-region t))
+            )))
+                nil)
+
+(defun check-higher-vertical-number (board regions x y num empty-cell-region)
+  (loop for row from 0 below x do
+        (let* ((region-cell (find-region row y regions)))
+          (when (and region-cell
+                     (eql region-cell empty-cell-region)
+                     (/= (get-cell-value board row y) 0)
+                     (< (get-cell-value board row y) num))
+            (return-from check-higher-vertical-number t))))
+    )
+
+(defun check-adjacencies (board x y num)
+  (let ((board-size (length board)))
+    ;; Check Above
+    (when (and (>= (- x 1) 0)
+               (< (- x 1) board-size)
+               (>= y 0)
+               (< y board-size)
+               (= (get-cell-value board (- x 1) y) num))
+      (return-from check-adjacencies t))
+    
+    ;; Check Below
+    (when (and (>= (+ x 1) 0)
+               (< (+ x 1) board-size)
+               (>= y 0)
+               (< y board-size)
+               (= (get-cell-value board (+ x 1) y) num))
+      (return-from check-adjacencies t))
+
+    ;; Check Left
+    (when (and (>= x 0)
+               (< x board-size)
+               (>= (- y 1) 0)
+               (< (- y 1) board-size)
+               (= (get-cell-value board x (- y 1)) num))
+      (return-from check-adjacencies t))
+
+    ;; Check Right
+    (when (and (>= x 0)
+               (< x board-size)
+               (>= (+ y 1) 0)
+               (< (+ y 1) board-size)
+               (= (get-cell-value board x (+ y 1)) num))
+      (return-from check-adjacencies t))
+
+    ;; If none of the checks returned nil, return t
+    ))
+
+(defun is-valid (board regions-dict empty-cell-row empty-cell-col num)
+    (let* ((region (find-region empty-cell-row empty-cell-col regions-dict))
+       (region-cells (when region (get-region-cells region regions-dict))))
+        (if (> num (length region-cells))
+            (return-from is-valid nil))
+        (if (check-if-number-exist-in-region board region-cells empty-cell-row empty-cell-col num)
+            (return-from is-valid nil))
+        (if (check-higher-vertical-number board regions-dict empty-cell-row empty-cell-col num region)
+            (return-from is-valid nil))
+        (if (check-adjacencies board empty-cell-row empty-cell-col num)
+            (return-from is-valid nil))
+            )
+    t)
+
+
+
+(defun solve (board regions)
+    (let ((empty-cell (find-empty-cell board)))
+    (if (not empty-cell)
+        (return-from solve t))
+
+    (destructuring-bind(i j) empty-cell
+        (loop for num from 1 to (1- (length board)) do
+            (if (is-valid board regions i j num)
+                ; se for válido
+                (progn
+                    (change-board-value board i j num)
+                    (if (solve board regions)
+                        (return-from solve t)
+                    )
+                    (change-board-value board i j 0))))
+        (return-from solve nil)
+    )))
+
+
+(defun main ()
+  (let ((board (kojun-board)))
+    (let ((regions (kojun-regions))
+          (region-dict))
+      (setq region-dict (create-region-dict regions))
+      (if (solve board region-dict)
+          (print-kojun-board board)))
+    ))
+
+(main)
