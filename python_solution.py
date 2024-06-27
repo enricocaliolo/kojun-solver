@@ -5,7 +5,7 @@ def print_board(board):
 
 
 def generate_board():
-    with open("kojun_10x10.txt", "r") as f:
+    with open("kojun_17x17.txt", "r") as f:
         n_grid = int(f.readline())
 
         board = []
@@ -63,26 +63,32 @@ def is_valid(board, regions, empty_cell, num):
     # checando adjacências da célula
     x, y = empty_cell
 
-    # número em cima maior
-    for row in range(x):
-        region_cell, _ = find_region((row, y), regions)
-        if region_cell == region and board[row][y] != 0 and board[row][y] < num:
+    # Checa se o número em cima é da mesma região. Se sim, checa se é maior.
+    if 0 <= x - 1 < len(board) and board[x - 1][y] != 0:
+        above_region, _ = find_region((x - 1, y), regions)
+        if above_region == region and board[x - 1][y] <= num:
             return False
 
-    # Check Above
-    if 0 <= x - 1 < len(board) and 0 <= y < len(board) and board[x - 1][y] == num:
+    # Checa se o número embaixo é da mesma região. Se sim, checa se é menor.
+    if 0 <= x + 1 < len(board) and board[x + 1][y] != 0:
+        below_region, _ = find_region((x + 1, y), regions)
+        if below_region == region and board[x + 1][y] >= num:
+            return False
+
+    # Checa se o número de cima é igual.
+    if 0 <= x - 1 < len(board) and board[x - 1][y] == num:
         return False
 
-    # Check Below
-    if 0 <= x + 1 < len(board) and 0 <= y < len(board) and board[x + 1][y] == num:
+    # Checa se o número debaixo é igual.
+    if 0 <= x + 1 < len(board) and board[x + 1][y] == num:
         return False
 
-    # Check Left
-    if 0 <= x < len(board) and 0 <= y - 1 < len(board) and board[x][y - 1] == num:
+    # Checa se o número à esquerda é igual.
+    if 0 <= y - 1 < len(board) and board[x][y - 1] == num:
         return False
 
-    # Check Right
-    if 0 <= x < len(board) and 0 <= y + 1 < len(board) and board[x][y + 1] == num:
+    # Checa se o número à direita é igual.
+    if 0 <= y + 1 < len(board) and board[x][y + 1] == num:
         return False
 
     return True
