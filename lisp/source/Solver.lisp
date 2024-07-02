@@ -96,6 +96,7 @@ mesmo número.
 todas as regras do puzzle."
     (let* ((region (Utils:find-region empty-cell-row empty-cell-col regions-dict))
        (region-cells (when region (Utils:get-region-cells region regions-dict))))
+       ;; Checa se o número é válido para uma região.
         (if (> num (length region-cells))
             (return-from is-valid nil))
         (if (check-if-number-exist-in-region board region-cells num)
