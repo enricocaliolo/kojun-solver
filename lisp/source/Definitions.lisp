@@ -1,14 +1,18 @@
 (defpackage :Definitions
   (:use :common-lisp)
-  (:export  :kojun-board
-            :kojun-regions
+  (:export  :kojun-board-17x17
+            :kojun-regions-17x17
+            :kojun-board-10x10
+            :kojun-regions-10x10
+            :kojun-board-6x6
+            :kojun-regions-6x6
             :create-region-dict
   ))
 
 (in-package :Definitions)
 
-(defun kojun-board ()
-  "Valores iniciais do Kojun."
+(defun kojun-board-17x17 ()
+  "Valores iniciais do Kojun 17x17"
   '((0 3 0 0 0 0 5 1 0 3 1 0 7 3 0 4 2)
     (6 0 0 0 0 3 0 0 0 0 2 5 0 0 0 3 4)
     (5 0 0 1 5 0 2 0 0 5 0 0 4 1 0 0 0)
@@ -27,8 +31,8 @@
     (2 0 2 0 4 0 0 0 1 0 0 1 0 4 0 0 0)
     (1 7 6 5 0 4 1 7 2 3 1 2 3 0 2 0 0)))
 
-(defun kojun-regions ()
-  "Regiões do Kojun"
+(defun kojun-regions-17x17 ()
+  "Regiões do Kojun 17x17"
   '((01 02 02 03 04 04 05 05 05 05 06 06 06 06 06 06 06) 
     (02 02 02 03 03 04 05 07 07 08 08 09 10 10 10 10 11) 
     (02 02 13 03 14 04 05 05 07 07 07 09 10 10 10 11 11) 
@@ -46,6 +50,58 @@
     (59 59 50 50 52 52 52 53 53 53 55 55 56 56 57 57 57) 
     (59 64 50 50 52 52 60 61 61 62 62 55 56 63 63 57 58) 
     (59 59 59 59 60 60 60 60 60 60 62 62 62 63 63 57 57) ))
+
+(defun kojun-board-10x10 () 
+  "Valores iniciais do Kojun 10x10"
+  '((5 0 2 0 2 0 3 1 3 1)
+    (0 4 0 1 0 5 0 5 0 4)
+    (7 5 1 7 0 0 3 1 3 0)
+    (0 4 0 0 0 0 0 0 0 3)
+    (2 0 3 4 0 2 0 0 4 0)
+    (5 0 2 0 6 0 0 0 0 0)
+    (0 1 3 0 1 0 0 4 0 3)
+    (6 7 0 3 0 1 4 0 0 1)
+    (4 0 3 0 4 0 0 0 0 3)
+    (0 1 0 2 0 6 2 0 2 1))
+)
+
+(defun kojun-regions-10x10 () 
+  "Regiŏes do Kojun 10x10"
+  '((01 02 02 02 03 03 03 03 04 04)
+    (01 01 01 02 05 05 06 06 04 06)
+    (07 07 01 05 05 08 09 06 06 06)
+    (07 07 05 05 10 08 09 09 09 11)
+    (07 07 07 05 10 10 12 11 11 11)
+    (13 13 14 14 14 10 15 15 16 16)
+    (13 13 13 14 14 18 19 20 16 16)
+    (17 17 13 14 18 18 19 20 21 21)
+    (17 17 22 22 22 22 19 20 20 23)
+    (17 17 17 22 22 22 19 19 23 23))
+)
+
+(defun kojun-board-6x6 () 
+  "Valores iniciais do Kojun 6x6"
+  '(
+    (0 0 4 0 2 0)
+    (0 0 3 0 0 0)
+    (1 4 0 4 0 0)
+    (0 5 0 0 0 2)
+    (0 0 0 0 3 0)
+    (6 2 0 2 0 5)
+  )
+)
+
+(defun kojun-regions-6x6 () 
+  "Regiões do Kojun 6x6"
+  '(
+    (01 02 02 02 04 05)
+    (01 03 02 04 04 04)
+    (01 01 06 04 07 07)
+    (08 09 06 10 10 07)
+    (08 09 09 11 11 07)
+    (09 09 09 11 11 11)
+  )
+)
 
 (defun create-region-dict (regions)
   "Cria a hash table das regiões."
