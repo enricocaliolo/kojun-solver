@@ -116,7 +116,7 @@ updateBoard board (x, y) num =
 main :: IO ()
 main = do
     let board = board_10x10  -- Define o tabuleiro inicial
-    let regions = regions_17x17  -- Define as regiões do tabuleiro
+    let regions = regions_10x10  -- Define as regiões do tabuleiro
     let solution = solve board regions  -- Tenta resolver o tabuleiro
     case solution of
         Just solvedBoard -> printBoard solvedBoard  -- Se resolver com sucesso, imprime o tabuleiro resolvido
